@@ -1,8 +1,10 @@
 FILE_CATEGORIES = {
-    "Images": [".jpg", "jpeg", ".png", "gif", "webp"],
-    "Documents": [".pdf", ".doc", ".docx", ".txt", ".rtf"],
-    "Videos": [".mp4", ".mkv", ".avi", ".mov"],
-    "Music": [".mp3", ".wav", ".flac"],
-    "Code": [".py", ".cpp", ".c", ".java", ".js", ".html", ".css"],
-    "Archives": [".zip", ".rar", ".7z"]
+    "Images": [".jpg", "jpeg", ".png", "gif", "webp", ".bmp", ".svg", ".ico"],
+    "Documents": [".pdf", ".doc", ".docx", ".txt", ".rtf", ".odt"],
+    "Spreadsheets": [".xls", ".xlsx", ".csv"],
+    "Presentations": [".ppt", ".pptx", ".odp"],
+    "Videos": [".mp4", ".mkv", ".avi", ".mov", ".wmv", ".webm"],
+    "Music": [".mp3", ".wav", ".flac", ".aac", ".ogg"],
+    "Code": [".py", ".cpp", ".c", ".h", ".java", ".js", ".ts", ".html", ".css", ".php", ".json"],
+    "Archives": [".zip", ".rar", ".7z", ".tar", ".gz"]
 }
