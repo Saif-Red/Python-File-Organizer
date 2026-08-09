@@ -26,7 +26,7 @@ def get_unique_destination(destination):
 
         counter += 1
 
-def organize_folder(folder_path):
+def organize_folder(folder_path, dry_run=False):
     folder = Path(folder_path)
 
     if not folder.exists():
@@ -45,9 +45,16 @@ def organize_folder(folder_path):
 
         category = get_category(file.suffix)
         destination = folder / category
-        destination.mkdir(exist_ok = True)
         target = destination / file.name
         target = get_unique_destination(target)
+
+        if dry_run:
+            print(f"[PREVIEW] {file.name} -> {target}")
+            files_moved += 1
+            continue
+        
+        destination.mkdir(exist_ok = True)
+
         try:
             shutil.move(str(file), str(target))
             files_moved += 1
@@ -56,9 +63,16 @@ def organize_folder(folder_path):
             files_failed += 1
             print(f"Could not move {file.name}: {error}")
 
-        print("\n================================")
-        print("           SUMMARY")
-        print("================================")
-        print(f"Files moved:  {files_moved}")
-        print(f"Files failed: {files_failed}")
-        print("================================")
+        if dry_run:
+            print("\n================================")
+            print("           PREVIEW")
+            print("================================")
+            print(f"Files that would be moved: {files_moved}")
+            print("No files were moved.")
+        else:
+            print("\n================================")
+            print("           SUMMARY")
+            print("================================")
+            print(f"Files moved:  {files_moved}")
+            print(f"Files failed: {files_failed}")
+            print("================================")
