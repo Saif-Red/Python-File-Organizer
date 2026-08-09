@@ -1,7 +1,19 @@
 from pathlib import Path
 import shutil
+import logging
 
 from config import FILE_CATEGORIES
+
+LOG_DIR = Path("logs")
+LOG_DIR.mkdir(exist_ok=True)
+
+logging.basicConfig(
+    filename = LOG_DIR / "organizer.log",
+    level = logging.INFO,
+    format = "%(asctime)s - %(levelname)s - %(message)s"
+)
+
+logger = logging.getLogger(__name__)
 
 def get_category(extension):
     extension = extension.lower()
@@ -37,6 +49,8 @@ def organize_folder(folder_path, dry_run=False):
         print("ERROR: The selected path is not a folder.")
         return
 
+    logger.info(f"Started organization: {folder}")
+
     files_moved = 0
     files_failed = 0
     for file in folder.iterdir():
@@ -50,6 +64,7 @@ def organize_folder(folder_path, dry_run=False):
 
         if dry_run:
             print(f"[PREVIEW] {file.name} -> {target}")
+            logger.info(f"Preview: {file.name} -> {target}")
             files_moved += 1
             continue
         
@@ -58,10 +73,15 @@ def organize_folder(folder_path, dry_run=False):
         try:
             shutil.move(str(file), str(target))
             files_moved += 1
+
             print(f"Moved: {file.name} -> {target}")
+            logger.info(f"Moved: {file.name} -> {target}")
+
         except OSError as error:
             files_failed += 1
+
             print(f"Could not move {file.name}: {error}")
+            logger.error(f"Could not move {file.name}: {error}")
 
         if dry_run:
             print("\n================================")
@@ -76,3 +96,5 @@ def organize_folder(folder_path, dry_run=False):
             print(f"Files moved:  {files_moved}")
             print(f"Files failed: {files_failed}")
             print("================================")
+
+        logger.info(f"Organization completed. Moved: {files_moved}, Failed: {files_failed}")
