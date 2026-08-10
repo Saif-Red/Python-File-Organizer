@@ -39,7 +39,7 @@ def get_unique_destination(destination):
 
         counter += 1
 
-def organize_folder(folder_path, dry_run=False):
+def organize_folder(folder_path, dry_run=False, progress_callback = None):
     folder = Path(folder_path)
 
     if not folder.exists():
@@ -68,7 +68,17 @@ def organize_folder(folder_path, dry_run=False):
     files_failed = 0
     details = []
 
-    for file in folder.iterdir():
+    files = [
+        file for file in folder.iterdir()
+        if file.is_file()
+    ]
+
+    total_files = len(files)
+
+    if progress_callback:
+        progress_callback(0, total_files)
+
+    for file in files:
 
         if not file.is_file():
             continue
@@ -91,6 +101,11 @@ def organize_folder(folder_path, dry_run=False):
             details.append(message)
 
             files_moved += 1
+            if progress_callback:
+                progress_callback(
+                    files_moved + files_failed,
+                    total_files
+                )
             continue
 
         destination.mkdir(exist_ok=True)
@@ -106,6 +121,12 @@ def organize_folder(folder_path, dry_run=False):
             logger.info(message)
 
             details.append(message)
+
+            if progress_callback:
+                progress_callback(
+                    files_moved + files_failed,
+                    total_files
+                )
 
         except OSError as error:
 

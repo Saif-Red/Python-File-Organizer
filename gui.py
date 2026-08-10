@@ -1,6 +1,6 @@
 import tkinter as tk
 import threading
-from tkinter import filedialog, messagebox
+from tkinter import filedialog, messagebox, ttk
 
 from organizer import organize_folder
 
@@ -66,6 +66,22 @@ class FileOrganizerGUI:
 
         self.status_label.pack(pady=20)
 
+        self.progress_bar = ttk.Progressbar(
+            self.root,
+            orient = "horizontal",
+            length = 500,
+            mode ="determinate"
+        )
+
+        self.progress_bar.pack(pady = 10)
+
+        self.progress_label = tk.Label(
+            self.root,
+            text ="0 / 0 files"
+        )
+
+        self.progress_label.pack()
+
         self.result_text = tk.Text(
             self.root,
             height=10,
@@ -110,6 +126,12 @@ class FileOrganizerGUI:
 
         self.status_label.config(
             text="Status: Organizing files..."
+        )
+
+        self.progress_bar["value"] = 0
+
+        self.progress_label.config(
+            text = "0 / 0 files"
         )
 
         self.organize_button.config(
@@ -264,7 +286,8 @@ class FileOrganizerGUI:
     def organize_worker(self, folder):
         result = organize_folder(
             folder,
-            dry_run = False
+            dry_run = False,
+            progress_callback = self.update_progress
         )
 
         self.root.after(
@@ -321,6 +344,32 @@ class FileOrganizerGUI:
 
         self.preview_button.config(
             state = tk.NORMAL
+        )
+
+    def update_progress(self, processed, total):
+        self.root.after(
+            0,
+            lambda: self.update_progress_gui(
+                processed,
+                total
+            )
+        )
+
+    def update_progress_gui(self, processed, total):
+        if total == 0:
+            self.progress_bar["value"] =0
+            self.progress_label.config(
+                text = "0 / 0 files"
+            )
+            return
+
+        percentage = (
+            processed / total
+        ) * 100
+
+        self.progress_bar["value"] = percentage
+        self.progress_label.config(
+            text = f"{processed} / {total} files"
         )
 
 
