@@ -32,7 +32,8 @@ class FileOrganizerGUI:
         self.preview_button = tk.Button(
             self.root,
             text = "Preview Changes",
-            width = 20
+            width = 20,
+            command = self.test_preview
         )
         self.preview_button.pack(pady = 10)
 
@@ -50,11 +51,29 @@ class FileOrganizerGUI:
         )
         self.status_label.pack(pady = 20)
 
+        self.result_text = tk.Text(
+            self.root,
+            height = 10,
+            width = 75
+        )
+        self.result_text.pack(pady = 10)
+
     def browse_folder(self):
         folder = filedialog.askdirectory()
         if folder:
             self.folder_entry.delete(0, tk.END)
             self.folder_entry.insert(0, folder)
+
+    def show_result(self, message):
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, message)
+
+    def test_preview(self):
+        self.status_label.config(text = "Status: Preview clicked")
+        self.show_result(
+            "Preview button is working.\n\n"
+            "The organizer engine will be connected here next."
+        )
 
 def main():
     root = tk.Tk()
