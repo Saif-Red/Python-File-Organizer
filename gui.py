@@ -1,4 +1,5 @@
 import tkinter as tk
+import threading
 from tkinter import filedialog, messagebox
 
 from organizer import organize_folder
@@ -111,10 +112,21 @@ class FileOrganizerGUI:
             text="Status: Organizing files..."
         )
 
-        result = organize_folder(
-            folder,
-            dry_run=False
+        self.organize_button.config(
+            state = tk.DISABLED
         )
+
+        self.preview_button.config(
+            state = tk.DISABLED
+        )
+
+        thread = threading.Thread(
+            target = self.organize_worker,
+            args = (folder,),
+            daemon = True
+        )
+
+        thread.start()
 
         if not result["success"]:
 
@@ -248,6 +260,68 @@ class FileOrganizerGUI:
         )
 
         self.show_result(output)
+
+    def organize_worker(self, folder):
+        result = organize_folder(
+            folder,
+            dry_run = False
+        )
+
+        self.root.after(
+            0,
+            lambda: self.organization_complete(result)
+        )
+
+    def organization_complete(self, result):
+        if not result["success"]:
+            self.status_label.config(
+                text = "Status: Error"
+            )
+
+            self.show_result(
+                result["error"]
+            )
+
+            self.organize_button.config(
+                state = tk.NORMAL
+            )
+
+            self.preview_button.config(
+                state = tk.NORMAL
+            )
+
+            return
+
+        output = "ORGANIZATION COMPLETE\n"
+        output += "=" * 50
+        output += "\n\n"
+
+        for detail in result["details"]:
+            output += detail + "\n"
+
+        output += (
+            f"Files moved: "
+            f"{result['files_moved']}\n"
+        )
+
+        output += (
+            f"Files failed: "
+            f"{result['files_failed']}\n"
+        )
+
+        self.status_label.config(
+            text = "Status: Organization complete"
+        )
+
+        self.show_result(output)
+
+        self.organize_button.config(
+            state = tk.NORMAL
+        )
+
+        self.preview_button.config(
+            state = tk.NORMAL
+        )
 
 
 def main():
