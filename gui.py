@@ -29,6 +29,27 @@ class FileOrganizerGUI:
 
         self.browse_button.pack(pady = 10)
 
+        self.preview_button = tk.Button(
+            self.root,
+            text = "Preview Changes",
+            width = 20
+        )
+        self.preview_button.pack(pady = 10)
+
+        self.organize_button = tk.Button(
+            self.root,
+            text = "Organize Files",
+            width = 20
+        )
+        self.organize_button.pack(pady = 10)
+
+        self.status_label = tk.Label(
+            self.root,
+            text = "Status: Ready",
+            font = ("Arial", 12)
+        )
+        self.status_label.pack(pady = 20)
+
     def browse_folder(self):
         folder = filedialog.askdirectory()
         if folder:
