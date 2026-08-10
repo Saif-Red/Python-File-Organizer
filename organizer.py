@@ -4,13 +4,14 @@ import logging
 
 from config import FILE_CATEGORIES
 
+
 LOG_DIR = Path("logs")
 LOG_DIR.mkdir(exist_ok=True)
 
 logging.basicConfig(
-    filename = LOG_DIR / "organizer.log",
-    level = logging.INFO,
-    format = "%(asctime)s - %(levelname)s - %(message)s"
+    filename=LOG_DIR / "organizer.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
 )
 
 logger = logging.getLogger(__name__)
@@ -42,59 +43,93 @@ def organize_folder(folder_path, dry_run=False):
     folder = Path(folder_path)
 
     if not folder.exists():
-        print("ERROR: Folder does not exist")
-        return
+        return {
+            "success": False,
+            "dry_run": dry_run,
+            "files_moved": 0,
+            "files_failed": 0,
+            "details": [],
+            "error": "Folder does not exist."
+        }
 
     if not folder.is_dir():
-        print("ERROR: The selected path is not a folder.")
-        return
+        return {
+            "success": False,
+            "dry_run": dry_run,
+            "files_moved": 0,
+            "files_failed": 0,
+            "details": [],
+            "error": "The selected path is not a folder."
+        }
 
     logger.info(f"Started organization: {folder}")
 
     files_moved = 0
     files_failed = 0
+    details = []
+
     for file in folder.iterdir():
+
         if not file.is_file():
             continue
 
         category = get_category(file.suffix)
+
         destination = folder / category
         target = destination / file.name
+
         target = get_unique_destination(target)
 
         if dry_run:
-            print(f"[PREVIEW] {file.name} -> {target}")
-            logger.info(f"Preview: {file.name} -> {target}")
+            message = f"[PREVIEW] {file.name} -> {target}"
+
+            print(message)
+            logger.info(
+                f"Preview: {file.name} -> {target}"
+            )
+
+            details.append(message)
+
             files_moved += 1
             continue
-        
-        destination.mkdir(exist_ok = True)
+
+        destination.mkdir(exist_ok=True)
 
         try:
             shutil.move(str(file), str(target))
+
             files_moved += 1
 
-            print(f"Moved: {file.name} -> {target}")
-            logger.info(f"Moved: {file.name} -> {target}")
+            message = f"Moved: {file.name} -> {target}"
+
+            print(message)
+            logger.info(message)
+
+            details.append(message)
 
         except OSError as error:
+
             files_failed += 1
 
-            print(f"Could not move {file.name}: {error}")
-            logger.error(f"Could not move {file.name}: {error}")
+            message = (
+                f"Could not move {file.name}: {error}"
+            )
 
-        if dry_run:
-            print("\n================================")
-            print("           PREVIEW")
-            print("================================")
-            print(f"Files that would be moved: {files_moved}")
-            print("No files were moved.")
-        else:
-            print("\n================================")
-            print("           SUMMARY")
-            print("================================")
-            print(f"Files moved:  {files_moved}")
-            print(f"Files failed: {files_failed}")
-            print("================================")
+            print(message)
+            logger.error(message)
 
-        logger.info(f"Organization completed. Moved: {files_moved}, Failed: {files_failed}")
+            details.append(message)
+
+    logger.info(
+        f"Organization completed. "
+        f"Moved: {files_moved}, "
+        f"Failed: {files_failed}"
+    )
+
+    return {
+        "success": True,
+        "dry_run": dry_run,
+        "files_moved": files_moved,
+        "files_failed": files_failed,
+        "details": details
+    }

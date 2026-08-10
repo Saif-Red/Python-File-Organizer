@@ -1,5 +1,7 @@
 import tkinter as tk
 from tkinter import filedialog
+
+from organizer import organize_folder
 class FileOrganizerGUI:
     def __init__(self, root):
         self.root =root
@@ -33,7 +35,7 @@ class FileOrganizerGUI:
             self.root,
             text = "Preview Changes",
             width = 20,
-            command = self.test_preview
+            command = self.preview_files
         )
         self.preview_button.pack(pady = 10)
 
@@ -68,12 +70,59 @@ class FileOrganizerGUI:
         self.result_text.delete(1.0, tk.END)
         self.result_text.insert(tk.END, message)
 
-    def test_preview(self):
-        self.status_label.config(text = "Status: Preview clicked")
-        self.show_result(
-            "Preview button is working.\n\n"
-            "The organizer engine will be connected here next."
+    def preview_files(self):
+        folder = self.folder_entry.get().strip()
+
+        if not folder:
+            self.status_label.config(
+                text = "Status: Please select a folder."
+            )
+
+            self.show_result("Please select a folder before previewing.")
+
+            return
+
+        self.status_label.config(text = "Status: Creating preview...")
+
+        result = organize_folder(folder, dry_run = True)
+
+        if not result["success"]:
+            self.status_label.config(
+                text = "Status: Error"
+            )
+            self.show_result(
+                result["error"]
+            )
+            return
+
+        output = "PREVIEW\n"
+        output += "=" * 50
+        output += "\n\n"
+
+        for detail in result["details"]:
+            output += detail + "\n"
+
+        output += "\n"
+        output += "=" * 50
+        output += "\n"
+
+        output += (
+            f"Files that would be moved: "
+            f"{result['files_moved']}\n"
         )
+
+        output += (
+            f"Files that failed: "
+            f"{result['files_failed']}\n"
+        )
+
+        output += "\nNo files were moved."
+
+        self.status_label.config(
+            text = "Status: Preview complete."
+        )
+
+        self.show_result(output)
 
 def main():
     root = tk.Tk()
