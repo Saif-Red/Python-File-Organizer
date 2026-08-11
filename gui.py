@@ -9,11 +9,26 @@ class FileOrganizerGUI:
 
     def __init__(self, root):
         self.root = root
-
         self.root.title("Smart File Organizer")
-        self.root.geometry("700x500")
-
+        self.root.geometry("800x650")
+        self.root.minsize(700, 550)
+        self.setup_styles()
         self.create_widgets()
+
+    def setup_styles(self):
+        self.style = ttk.Style()
+
+        self.style.configure(
+            "Action.TButton",
+            font = ("Arial", 11, "bold"),
+            padding = (15, 8)
+        )
+
+        self.style.configure(
+            "Browse.TButton",
+            font = ("Arial", 10),
+            padding = (12, 6)
+        )
 
     def create_widgets(self):
 
@@ -30,8 +45,10 @@ class FileOrganizerGUI:
         self.title_label = tk.Label(
             self.header_frame,
             text="SMART FILE ORGANIZER",
-            font=("Arial", 22, "bold")
+            font=("Arial", 24, "bold")
         )
+
+        self.title_label.pack(pady = (10, 2))
 
         self.subtitle_label = tk.Label(
                 self.header_frame,
@@ -39,9 +56,7 @@ class FileOrganizerGUI:
                 font=("Arial", 11)
         )
         
-        self.subtitle_label.pack()
-
-        self.title_label.pack(pady=30)
+        self.subtitle_label.pack(pady = (0, 10))
 
         self.folder_frame = tk.LabelFrame(
             self.root,
@@ -56,30 +71,30 @@ class FileOrganizerGUI:
             pady = 10
         )
 
-        self.folder_entry = tk.Entry(
+        self.folder_entry = ttk.Entry(
             self.folder_frame,
-            width=55
         )
 
         self.folder_entry.grid(
             row = 0,
             column = 0,
             padx = 5,
-            pady=5,
+            pady = 5,
             sticky = "ew"
         )
 
-        self.browse_button = tk.Button(
+        self.browse_button = ttk.Button(
             self.folder_frame,
             text="Browse",
-            command=self.browse_folder
+            command=self.browse_folder,
+            style = "Browse.TButton"
         )
 
         self.browse_button.grid(
             row = 0,
             column = 1,
             padx = 5,
-            pady=5
+            pady = 5
         )
 
         self.folder_frame.columnconfigure(
@@ -97,11 +112,11 @@ class FileOrganizerGUI:
             pady = 10
         )
 
-        self.preview_button = tk.Button(
+        self.preview_button = ttk.Button(
             self.action_frame,
             text="Preview Changes",
-            width=20,
-            command=self.preview_files
+            command=self.preview_files,
+            style = "Action.TButton"
         )
 
         self.preview_button.pack(
@@ -111,18 +126,18 @@ class FileOrganizerGUI:
             pady = 5
         )
 
-        self.organize_button = tk.Button(
+        self.organize_button = ttk.Button(
             self.action_frame,
             text="Organize Files",
-            width=20,
-            command=self.organize_files
+            command=self.organize_files,
+            style = "Action.TButton"
         )
 
         self.organize_button.pack(
             side = "left",
             expand = True,
             padx = 10,
-            pady=5
+            pady = 5
         )
 
         self.status_frame = tk.LabelFrame(
@@ -141,32 +156,35 @@ class FileOrganizerGUI:
 
         self.status_label = tk.Label(
             self.status_frame,
-            text="Status: Ready",
-            font=("Arial", 12)
+            text="● Ready",
+            font=("Arial", 11, "bold"),
+            anchor = "w"
         )
 
         self.status_label.pack(
-            anchor = "w"
+            fill = "x"
         )
 
         self.progress_bar = ttk.Progressbar(
             self.status_frame,
             orient = "horizontal",
-            length = 500,
             mode ="determinate"
         )
 
         self.progress_bar.pack(
             fill = "x",
-            pady = 10
+            pady = (10, 5)
         )
 
         self.progress_label = tk.Label(
             self.status_frame,
-            text ="0 / 0 files"
+            text ="0 / 0 files",
+            font = ("Arial", 9)
         )
 
-        self.progress_label.pack()
+        self.progress_label.pack(
+            anchor = "e"
+        )
 
         self.result_frame = tk.LabelFrame(
             self.root,
@@ -182,15 +200,54 @@ class FileOrganizerGUI:
             pady = 10
         )
 
-        self.result_text = tk.Text(
+        self.clear_button = ttk.Button(
             self.result_frame,
-            height=10,
-            width=75
+            text = "Clear Results",
+            command = self.clear_results
+        )
+
+        self.clear_button.pack(
+            anchor = "e",
+            pady = (5,0)
+        )
+
+        self.result_container = tk.Frame(
+            self.result_frame
+        )
+
+        self.result_container.pack(
+            fill = "both",
+            expand = True
+        )
+
+        self.result_text = tk.Text(
+            self.result_container,
+            height = 10,
+            wrap = "word",
+            font = ("Consolas", 10),
+            padx = 8,
+            pady = 8
+        )
+
+        self.result_scrollbar = ttk.Scrollbar(
+            self.result_container,
+            orient = "vertical",
+            command = self.result_text.yview
+        )
+
+        self.result_text.configure(
+            yscrollcommand = self.result_scrollbar.set
         )
 
         self.result_text.pack(
+            side = "left",
             fill = "both",
             expand = True
+        )
+
+        self.result_scrollbar.pack(
+            side = "right",
+            fill = "y"
         )
 
     def organize_files(self):
@@ -434,6 +491,22 @@ class FileOrganizerGUI:
         self.progress_bar["value"] = percentage
         self.progress_label.config(
             text = f"{processed} / {total} files"
+        )
+
+    def clear_results(self):
+        self.result_text.delete(
+            "1.0",
+            tk.END
+        )
+
+        self.status_label.config(
+            text = "● Ready"
+        )
+
+        self.progress_bar["value"] = 0
+
+        self.progress_label.config(
+            text = "0 / 0 files"
         )
 
 
