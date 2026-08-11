@@ -363,6 +363,23 @@ class FileOrganizerGUI:
             dry_run=True
         )
 
+        if result.get("message"):
+            self.status_label.config(
+                text = "● " + result["message"]
+            )
+
+            self.progress_bar["value"] = 0
+
+            self.progress_label.config(
+                text = "0 / 0 files"
+            )
+
+            self.show_result(
+                result["message"]
+            )
+
+            return
+
         if not result["success"]:
 
             self.status_label.config(
@@ -417,6 +434,31 @@ class FileOrganizerGUI:
         )
 
     def organization_complete(self, result):
+        if result.get("message"):
+            self.status_label.config(
+                text ="● " + result["message"]
+            )
+
+            self.progress_bar["value"] = 0
+
+            self.progress_label.config(
+                text = "0 / 0 files"
+            )
+
+            self.show_result(
+                result["message"]
+            )
+
+            self.organize_button.config(
+                state = tk.NORMAL
+            )
+
+            self.preview_button.config(
+                state = tk.NORMAL
+            )
+
+            return
+        
         if not result["success"]:
             self.status_label.config(
                 text = "Status: Error"

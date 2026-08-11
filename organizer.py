@@ -73,6 +73,20 @@ def organize_folder(folder_path, dry_run=False, progress_callback = None):
         if file.is_file()
     ]
 
+    if not files:
+        logger.info(
+            f"No files found in folder: {folder}"
+        )
+
+        return {
+            "success": True,
+            "dry_run": dry_run,
+            "files_moved": 0,
+            "files_failed": 0,
+            "details": [],
+            "message": "No files moved in the selected folder."
+        }
+
     total_files = len(files)
 
     if progress_callback:
