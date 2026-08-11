@@ -17,78 +17,181 @@ class FileOrganizerGUI:
 
     def create_widgets(self):
 
+        self.header_frame = tk.Frame(
+            self.root
+        )
+
+        self.header_frame.pack(
+            fill = "x",
+            padx = 20,
+            pady = 10
+        )
+
         self.title_label = tk.Label(
-            self.root,
+            self.header_frame,
             text="SMART FILE ORGANIZER",
             font=("Arial", 22, "bold")
         )
 
+        self.subtitle_label = tk.Label(
+                self.header_frame,
+                text="Organize your files quickly and safely",
+                font=("Arial", 11)
+        )
+        
+        self.subtitle_label.pack()
+
         self.title_label.pack(pady=30)
 
-        self.folder_entry = tk.Entry(
+        self.folder_frame = tk.LabelFrame(
             self.root,
+            text = " Select Folder ",
+            padx = 10,
+            pady = 10
+        )
+
+        self.folder_frame.pack(
+            fill = "x",
+            padx = 20,
+            pady = 10
+        )
+
+        self.folder_entry = tk.Entry(
+            self.folder_frame,
             width=55
         )
 
-        self.folder_entry.pack(pady=10)
+        self.folder_entry.grid(
+            row = 0,
+            column = 0,
+            padx = 5,
+            pady=5,
+            sticky = "ew"
+        )
 
         self.browse_button = tk.Button(
-            self.root,
+            self.folder_frame,
             text="Browse",
             command=self.browse_folder
         )
 
-        self.browse_button.pack(pady=10)
+        self.browse_button.grid(
+            row = 0,
+            column = 1,
+            padx = 5,
+            pady=5
+        )
+
+        self.folder_frame.columnconfigure(
+            0,
+            weight = 1
+        )
+
+        self.action_frame = tk.Frame(
+            self.root
+        )
+
+        self.action_frame.pack(
+            fill = "x",
+            padx = 20,
+            pady = 10
+        )
 
         self.preview_button = tk.Button(
-            self.root,
+            self.action_frame,
             text="Preview Changes",
             width=20,
             command=self.preview_files
         )
 
-        self.preview_button.pack(pady=10)
+        self.preview_button.pack(
+            side = "left",
+            expand = True,
+            padx = 10,
+            pady = 5
+        )
 
         self.organize_button = tk.Button(
-            self.root,
+            self.action_frame,
             text="Organize Files",
             width=20,
             command=self.organize_files
         )
 
-        self.organize_button.pack(pady=10)
+        self.organize_button.pack(
+            side = "left",
+            expand = True,
+            padx = 10,
+            pady=5
+        )
+
+        self.status_frame = tk.LabelFrame(
+            self.root,
+            text = " Status ",
+            padx = 10,
+            pady = 10
+        )
+
+        self.status_frame.pack(
+
+            fill = "x",
+            padx = 20,
+            pady = 10
+        )
 
         self.status_label = tk.Label(
-            self.root,
+            self.status_frame,
             text="Status: Ready",
             font=("Arial", 12)
         )
 
-        self.status_label.pack(pady=20)
+        self.status_label.pack(
+            anchor = "w"
+        )
 
         self.progress_bar = ttk.Progressbar(
-            self.root,
+            self.status_frame,
             orient = "horizontal",
             length = 500,
             mode ="determinate"
         )
 
-        self.progress_bar.pack(pady = 10)
+        self.progress_bar.pack(
+            fill = "x",
+            pady = 10
+        )
 
         self.progress_label = tk.Label(
-            self.root,
+            self.status_frame,
             text ="0 / 0 files"
         )
 
         self.progress_label.pack()
 
-        self.result_text = tk.Text(
+        self.result_frame = tk.LabelFrame(
             self.root,
+            text = " Results ",
+            padx = 10,
+            pady = 10
+        )
+
+        self.result_frame.pack(
+            fill = "both",
+            expand = True,
+            padx = 20,
+            pady = 10
+        )
+
+        self.result_text = tk.Text(
+            self.result_frame,
             height=10,
             width=75
         )
 
-        self.result_text.pack(pady=10)
+        self.result_text.pack(
+            fill = "both",
+            expand = True
+        )
 
     def organize_files(self):
 
@@ -149,45 +252,6 @@ class FileOrganizerGUI:
         )
 
         thread.start()
-
-        if not result["success"]:
-
-            self.status_label.config(
-                text="Status: Error"
-            )
-
-            self.show_result(
-                result["error"]
-            )
-
-            return
-
-        output = "ORGANIZATION COMPLETE\n"
-        output += "=" * 50
-        output += "\n\n"
-
-        for detail in result["details"]:
-            output += detail + "\n"
-
-        output += "\n"
-        output += "=" * 50
-        output += "\n"
-
-        output += (
-            f"Files moved: "
-            f"{result['files_moved']}\n"
-        )
-
-        output += (
-            f"Files failed: "
-            f"{result['files_failed']}\n"
-        )
-
-        self.status_label.config(
-            text="Status: Organization complete"
-        )
-
-        self.show_result(output)
 
     def browse_folder(self):
 
