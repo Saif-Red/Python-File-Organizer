@@ -54,7 +54,8 @@ Smart-File-Organizer/
 │   └── test_organizer.py # Automated tests
 │
 └── logs/
-    └── organizer.log    # Operation log
+    └── organizer.log    # Operation log```
+
 
 ## Installation
 
