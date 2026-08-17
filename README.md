@@ -54,7 +54,8 @@ Smart-File-Organizer/
 │   └── test_organizer.py # Automated tests
 │
 └── logs/
-    └── organizer.log    # Operation log```
+    └── organizer.log    # Operation log
+```
 
 
 ## Installation
@@ -69,6 +70,7 @@ Smart-File-Organizer/
 
 ```bash
 git clone https://github.com/Saif-Red/Python-File-Organizer.git
+```
 
 
 # ▶️ Step 13.7 — Running the Application
@@ -77,12 +79,13 @@ Add:
 
 ```markdown
 ## Running the Application
+```
 
 Run the graphical application with:
 
 ```bash
 python gui.py
-
+```
 
 # 🧪 Step 13.8 — Testing
 
@@ -97,6 +100,7 @@ From the project root, run:
 
 ```bash
 python -m unittest discover
+```
 
 ## Technologies Used
 
@@ -127,4 +131,3 @@ This project was developed to practice:
 - Integration testing
 - Git and GitHub
 - Software project structure
-
