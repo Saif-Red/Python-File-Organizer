@@ -16,7 +16,8 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-def get_category(extension):
+def get_category(extension: str) -> str:
+    """Return the category associated with a file extension."""
     extension = extension.lower()
 
     for category, extensions in FILE_CATEGORIES.items():
@@ -24,7 +25,8 @@ def get_category(extension):
             return category
     return "Others"
 
-def get_unique_destination(destination):
+def get_unique_destination(destination: Path) -> Path:
+    """Return a unique destination path when a filename already exists."""
     if not destination.exists():
         return destination
 
@@ -39,7 +41,14 @@ def get_unique_destination(destination):
 
         counter += 1
 
-def organize_folder(folder_path, dry_run=False, progress_callback = None):
+def organize_folder(folder_path: str | Path, dry_run: bool = False, progress_callback = None):
+    """
+    Organize files in the selected folder into category folders.
+    
+    Files are categorized by extension. Existing filenames are
+    preserved whenever possible, and duplicate names receive a
+    numeric suffix.
+    """
     folder = Path(folder_path)
 
     if not folder.exists():
