@@ -77,7 +77,6 @@ git clone https://github.com/Saif-Red/Python-File-Organizer.git
 
 Run the graphical application with:
 
-```markdown
 ```bash
 python gui.py
 ```
@@ -88,7 +87,6 @@ The project includes automated tests for the file organization logic.
 
 From the project root, run:
 
-```markdown
 ```bash
 python -m unittest discover
 ```
