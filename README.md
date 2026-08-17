@@ -73,31 +73,22 @@ git clone https://github.com/Saif-Red/Python-File-Organizer.git
 ```
 
 
-# ▶️ Step 13.7 — Running the Application
-
-Add:
-
-```markdown
 ## Running the Application
-```
 
 Run the graphical application with:
 
+```markdown
 ```bash
 python gui.py
 ```
 
-# 🧪 Step 13.8 — Testing
-
-Add:
-
-```markdown
 ## Running Tests
 
 The project includes automated tests for the file organization logic.
 
 From the project root, run:
 
+```markdown
 ```bash
 python -m unittest discover
 ```
