@@ -1,170 +1,129 @@
 # Smart File Organizer
-A Python-based file organization utility that automatically sorts files into categorized folders based on their extensions.
+
+A Python desktop application that automatically organizes files into
+category-based folders based on their file extensions.
+
+The application provides a graphical interface built with Tkinter,
+preview mode, duplicate filename handling, progress tracking,
+logging, error handling, and automated tests.
 
 ## Features
 
 - Automatically organizes files by extension
 - Supports configurable file categories
-- Preview / dry-run mode
-- Confirmation before moving files
-- Duplicate filename protection
-- Error handling
-- Operation logging
-- JSON-based configuration
-- Summary of organized files
-- Command-line interface
+- Preview changes before moving files
+- Handles duplicate filenames safely
+- Provides a graphical user interface
+- Displays organization progress
+- Provides detailed operation results
+- Handles invalid folders and file movement errors
+- Maintains an operation log
+- Supports repeated organization runs safely
+- Includes automated unit and integration tests
 
-## Technologies Used
 
-- Python
-- JSON
-- Git
-- GitHub
+## File Categories
 
-### Python Modules
+Files are organized according to the extension categories defined in
+`config.py`.
 
-- pathlib
-- shutil
-- json
-- logging
+Typical categories include:
+
+- Images
+- Documents
+- Videos
+- Music
+- Archives
+- Others
+
+Unknown or unsupported file extensions are placed in the `Others`
+category.
 
 ## Project Structure
 
 ```text
-Python-File-Organizer/
+Smart-File-Organizer/
 │
-├── config.json
-├── config.py
-├── main.py
-├── organizer.py
-├── requirements.txt
-├── README.md
-└── .gitignore
-
-```
-The `logs/` directory is generated automatically when the application runs and is excluded from Git.
+├── organizer.py          # Core file organization logic
+├── gui.py                # Tkinter graphical interface
+├── config.py             # File category configuration
+├── README.md             # Project documentation
+│
+├── tests/
+│   ├── __init__.py
+│   └── test_organizer.py # Automated tests
+│
+└── logs/
+    └── organizer.log    # Operation log
 
 ## Installation
 
-1. git clone <repository-url>
-2. cd Python-File-Organizer
-3. python -m venv .venv
-4. .venv\Scripts\activate
-5. pip install -r requirements.txt
+### Requirements
 
-## Running the Application
+- Python 3.10 or newer
+- Windows
+- Tkinter
 
-Run:
+### Clone the repository
 
 ```bash
-python main.py
+git clone https://github.com/Saif-Red/Python-File-Organizer.git
+
+
+# ▶️ Step 13.7 — Running the Application
+
+Add:
 
 ```markdown
-## Preview Mode
+## Running the Application
 
-Preview mode allows you to see what the application intends to do without actually moving files.
+Run the graphical application with:
 
-Choose:
-
-```text
-1. Preview changes
-
-Then:
-
-```markdown
-## Organize Files
-
-Choose:
-
-```text
-2. Organize files
+```bash
+python gui.py
 
 
----
+# 🧪 Step 13.8 — Testing
 
-This is particularly important now.
-
-Explain:
+Add:
 
 ```markdown
-## Configuration
+## Running Tests
 
-File categories and extensions are stored in `config.json`.
+The project includes automated tests for the file organization logic.
 
-For example:
+From the project root, run:
 
-```json
-{
-    "Images": [
-        ".jpg",
-        ".png"
-    ],
-    "Documents": [
-        ".pdf",
-        ".docx"
-    ]
-}
+```bash
+python -m unittest discover
 
+## Technologies Used
 
-```markdown
-## Logging
+- **Python** — Application logic
+- **Tkinter** — Graphical user interface
+- **pathlib** — File and directory path handling
+- **shutil** — File movement
+- **logging** — Application logging
+- **unittest** — Automated testing
+- **Git & GitHub** — Version control and project management
 
-The application records operations in:
+## Concepts Practiced
 
-```text
-logs/organizer.log
+This project was developed to practice:
 
+- Python functions
+- Object-oriented programming concepts
+- File handling
+- Directory traversal
+- Exception handling
+- Path manipulation
+- GUI programming
+- Multithreading
+- Callback functions
+- Logging
+- Configuration management
+- Unit testing
+- Integration testing
+- Git and GitHub
+- Software project structure
 
----
-
-This is one of the most useful sections.
-
-Before:
-
-```text
-Downloads/
-├── photo.jpg
-├── assignment.pdf
-├── song.mp3
-├── program.py
-└── movie.mp4
-
-After:
-
-Downloads/
-├── Images/
-│   └── photo.jpg
-│
-├── Documents/
-│   └── assignment.pdf
-│
-├── Music/
-│   └── song.mp3
-│
-├── Code/
-│   └── program.py
-│
-└── Videos/
-    └── movie.mp4
-
-
-## Current Limitations
-
-- The current version uses a command-line interface.
-- Files are organized based on their extensions.
-- The application currently targets local filesystem organization.
-- There is no automatic background monitoring yet.
-
-## Future Improvements
-
-- Graphical user interface
-- Windows executable
-- Automatic folder monitoring
-- More advanced file classification
-- Custom user-defined rules
-- Improved configuration management
-
-## Author
-
-Mohd Saif Ansari
-mohdsaif1808@gmail.com
