@@ -315,7 +315,7 @@ The **SmartFileOrganizer.spec** file is also included in the repository to prese
 
 ## Concepts Practiced
 
-This project was developed to practice and strengthen:
+This project was developed to practice and strengthen
 - Python programming
 - Functions and modules
 - File handling
