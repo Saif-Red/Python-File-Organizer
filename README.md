@@ -3,10 +3,15 @@
 A Python-based Windows desktop application that automatically organizes
 files into category-based folders according to their file extensions.
 
-The application provides a graphical interface built with Tkinter,
-preview mode, duplicate filename protection, progress tracking,
-operation history, undo functionality, logging, configuration support,
-error handling, and automated tests.
+![Python](https://img.shields.io/badge/Python-3.10%2B-blue)
+![Platform](https://img.shields.io/badge/Platform-Windows-lightgrey)
+![GUI](https://img.shields.io/badge/GUI-Tkinter-orange)
+![Tests](https://img.shields.io/badge/Tests-19%20passing-success)
+![Version](https://img.shields.io/badge/Version-1.0.0-blue)
+
+Smart File Organizer provides a simple graphical interface for organizing
+files safely while supporting preview mode, duplicate protection,
+operation history, undo functionality, progress tracking, and logging.
 
 ---
 
@@ -43,9 +48,11 @@ photo.jpg
 report.pdf
 song.mp3
 archive.zip
+```
 
 may become:
 
+```text
 Selected Folder/
 │
 ├── Images/
@@ -108,7 +115,7 @@ Edit → Undo Last Organization
 or:
 
 ```text
-Ctrl + z
+Ctrl + Z
 ```
 
 Undo will not overwrite an existing file at the original location.
