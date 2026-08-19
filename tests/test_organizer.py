@@ -3,10 +3,13 @@ import tempfile
 
 from pathlib import Path
 
+import history
+
 from organizer import (
     get_category,
     get_unique_destination,
-    organize_folder
+    organize_folder,
+    undo_last_organization
 )
 
 class TestGetCategory(unittest.TestCase):
@@ -202,6 +205,178 @@ class TestOrganizeFolder(unittest.TestCase):
             self.assertTrue(
                 documents.exists()
             )
+
+    def test_organize_saves_history(self):
+        original_history_file = history.HISTORY_FILE
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            folder = Path(temp_dir)
+
+            history.HISTORY_FILE = (
+                folder / "history.json"
+            )
+
+            image = folder / "photo.jpg"
+            image.touch()
+
+            result = organize_folder(folder)
+
+            self.assertEqual(
+                result["files_moved"],
+                1
+            )
+
+            saved_history = history.load_history()
+
+            self.assertEqual(
+                len(saved_history),
+                1
+            )
+
+            self.assertEqual(
+                saved_history[0]["source"],
+                str(image)
+            )
+
+            self.assertEqual(
+                saved_history[0]["destination"],
+                str(folder / "Images" / "photo.jpg")
+            )
+        history.HISTORY_FILE = original_history_file
+
+    def test_undo_last_organization(self):
+        original_history_file = history.HISTORY_FILE
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            folder = Path(temp_dir)
+
+            history.HISTORY_FILE = (
+                folder / "history.json"
+            )
+
+            image = folder / "photo.jpg"
+            image.touch()
+
+            result = organize_folder(folder)
+
+            self.assertEqual(
+                result["files_moved"],
+                1
+            )
+
+            organized_file = (
+                folder
+                / "Images"
+                / "photo.jpg"
+            )
+
+            self.assertTrue(
+                organized_file.exists()
+            )
+
+            self.assertFalse(
+                image.exists()
+            )
+
+            undo_result = undo_last_organization()
+
+            self.assertTrue(
+                undo_result["success"]
+            )
+
+            self.assertEqual(
+                undo_result["files_restored"],
+                1
+            )
+
+            self.assertEqual(
+                undo_result["files_failed"],
+                0
+            )
+
+            self.assertTrue(
+                image.exists()
+            )
+
+            self.assertFalse(
+                organized_file.exists()
+            )
+
+            self.assertEqual(
+                history.load_history(),
+                []
+            )
+
+        history.HISTORY_FILE =(
+            original_history_file
+        )
+
+    def test_undo_does_not_overwrite_existing_file(self):
+        original_history_file = history.HISTORY_FILE
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            folder = Path(temp_dir)
+
+            history.HISTORY_FILE =(
+                folder / "history.json"
+            )
+
+            image = folder / "photo.jpg"
+            image.touch()
+
+            organize_folder(folder)
+
+            organized_file = (
+                folder
+                / "Images"
+                / "photo.jpg"
+            )
+
+            self.assertTrue(
+                organized_file.exists()
+            )
+
+            #Create another file at the original location.
+            image.touch()
+
+            undo_result = undo_last_organization()
+
+            self.assertTrue(
+                undo_result["success"]
+            )
+
+            self.assertEqual(
+                undo_result["files_restored"],
+                0
+            )
+
+            self.assertEqual(
+                undo_result["files_failed"],
+                1
+            )
+
+            #Original file must remain untouched.
+            self.assertTrue(
+                image.exists()
+            )
+
+            #Organized file must also remain because
+            #undo could not safely restore it.
+            self.assertTrue(
+                organized_file.exists()
+            )
+
+            #History should remain because undo
+            #was not complete
+            self.assertTrue(
+                history.has_history()
+            )
+
+        history.HISTORY_FILE = (
+            original_history_file
+        )
 
 if __name__ == "__main__":
     unittest.main()

@@ -3,6 +3,7 @@ import shutil
 import logging
 
 from config import FILE_CATEGORIES
+from history import save_history, load_history, clear_history
 
 
 LOG_DIR = Path("logs")
@@ -76,6 +77,7 @@ def organize_folder(folder_path: str | Path, dry_run: bool = False, progress_cal
     files_moved = 0
     files_failed = 0
     details = []
+    moves = []
 
     files = [
         file for file in folder.iterdir()
@@ -138,6 +140,13 @@ def organize_folder(folder_path: str | Path, dry_run: bool = False, progress_cal
 
             files_moved += 1
 
+            moves.append(
+                {
+                    "source": str(file),
+                    "destination": str(target)
+                }
+            )
+
             message = f"Moved: {file.name} -> {target}"
 
             print(message)
@@ -164,6 +173,9 @@ def organize_folder(folder_path: str | Path, dry_run: bool = False, progress_cal
 
             details.append(message)
 
+    if moves:
+        save_history(moves)
+    
     logger.info(
         f"Organization completed. "
         f"Moved: {files_moved}, "
@@ -174,6 +186,153 @@ def organize_folder(folder_path: str | Path, dry_run: bool = False, progress_cal
         "success": True,
         "dry_run": dry_run,
         "files_moved": files_moved,
+        "files_failed": files_failed,
+        "details": details
+    }
+
+def undo_last_organization(progress_callback = None):
+    """
+    Undo the most recent organization operation.
+    
+    Files are moved from their category folders back to
+    their original locations.
+    """
+
+    moves = load_history()
+
+    if not moves:
+        return {
+            "success": False,
+            "files_restored": 0,
+            "files_failed": 0,
+            "details": [],
+            "message": "There is no organization to undo."
+        }
+
+    files_restored = 0
+    files_failed = 0
+    details = []
+
+    total_files = len(moves)
+
+    if progress_callback:
+        progress_callback(0, total_files)
+
+    remaining_moves = []
+
+    #Reverse order is important
+    #The latest move is undone first
+    for move in reversed(moves):
+        source = Path(move["source"])
+        destination = Path(move["destination"])
+
+        #The destination is where the file currently exists.
+        #The source is where it originally came from.
+
+        if not destination.exists():
+
+            message = (
+                f"Could not undo: file not found:\n"
+                f"{destination}"
+            )
+
+            details.append(message)
+            files_failed += 1
+
+            remaining_moves.append(move)
+
+            if progress_callback:
+                progress_callback(
+                    files_restored + files_failed,
+                    total_files
+                )
+
+            continue
+
+        #Never overwrite an existing file.
+        if source.exists():
+            message = (
+                f"Could not restore:\n"
+                f"{source}\n\n"
+                f"An existing file is already there."
+            )
+
+            details.append(message)
+            files_failed += 1
+
+            remaining_moves.append(move)
+
+            if progress_callback:
+                progress_callback(
+                    files_restored + files_failed,
+                    total_files
+                )
+
+            continue
+
+        try:
+            source.parent.mkdir(
+                parents = True,
+                exist_ok = True
+            )    
+
+            shutil.move(
+                str(destination),
+                str(source)
+            )
+
+            files_restored += 1
+
+            message = (
+                f"Restored: {destination.name} -> {source}"
+            )
+
+            print(message)
+            logger.info(message)
+
+            details.append(message)
+
+        except OSError as error:
+            files_failed += 1
+
+            message = (
+                f"Could not restore {destination.name}: "
+                f"{error}"
+            )
+
+            print(message)
+            logger.error(message)
+
+            details.append(message)
+
+            remaining_moves.append(move)
+
+        if progress_callback:
+            progress_callback(
+                files_restored + files_failed,
+                total_files
+            )    
+
+    #If everything was successfully restored,
+    #there is nothing left to undo.
+    if not remaining_moves:
+        clear_history()
+
+    else:
+        #Keep only the operations that could not be undone.
+        save_history(
+            list(reversed(remaining_moves))
+        )
+
+    logger.info(
+        f"Undo completed. "
+        f"Restored: {files_restored}, "
+        f"Failed: {files_failed}"
+    )
+
+    return {
+        "success": True,
+        "files_restored": files_restored,
         "files_failed": files_failed,
         "details": details
     }

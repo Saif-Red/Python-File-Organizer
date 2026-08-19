@@ -1,0 +1,33 @@
+"""Application theme configuration"""
+
+#Main backgrounds
+BACKGROUND = "#0B1120"
+PANEL = "#111C30"
+PANEL_DARK = "#0F172A"
+
+#Accent
+ACCENT = "#3B82F6"
+ACCENT_HOVER = "#60A5FA"
+ACCENT_DARK = "#3563EB"
+
+#Text
+TEXT = "#F8FAFC"
+TEXT_SECONDARY = "#94A3B8"
+TEXT_MUTED = "#64748B"
+
+#Borders
+BORDER = "#263752"
+BORDER_ACTIVE = "#3B82F6"
+
+#Input / results
+INPUT_BACKGROUND = "#0A1222"
+RESULT_BACKGROUND = "#080F1D"
+
+#Status colors
+SUCCESS = "#22C55E"
+WARNING = "#F59E0B"
+ERROR = "#EF4444"
+
+#Hover / selection
+HOVER_BACKGROUND = "#1D4ED8"
+SELECT_BACKGROUND = "#2563EB"
